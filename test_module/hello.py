@@ -1,6 +1,6 @@
-# test_module/hello.py
+# Hello.py: A sample python script used for testing reviews
 
-def hello(name):
-    print("Hello " + name)
-
-hello("World")
+def helloWorld():
+    print("Hello World")
+    
+helloWorld()
