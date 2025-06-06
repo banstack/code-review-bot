@@ -9,7 +9,7 @@ def review_with_groq(diff):
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "mixtral-8x7b-32768",
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "messages": [
             {"role": "system", "content": "You are a senior software engineer doing code reviews."},
             {"role": "user", "content": f"Please review this code diff:\n\n{diff}"}
@@ -18,6 +18,11 @@ def review_with_groq(diff):
     }
 
     response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+
+    # 👇 Print the response for debugging
+    print("Raw Groq response:", response.status_code, response.text)
+
+    response.raise_for_status()
     return response.json()["choices"][0]["message"]["content"]
 
 def main():

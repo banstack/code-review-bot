@@ -7,6 +7,11 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -20,6 +25,12 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run code review
+      - name: Run LLM code review
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYTHONPATH: ${{ github.workspace }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF: ${{ github.ref }}
         run: |
-          python reviewbot/main.py
+          python3 -m reviewbot.main
