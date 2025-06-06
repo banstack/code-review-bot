@@ -1,0 +1,12 @@
+certifi==2025.4.26
+cffi==1.16.0
+charset-normalizer==3.4.2
+cryptography==41.0.5
+greenlet==1.1.2
+idna==3.10
+msgpack==1.0.2
+pycparser==2.21
+pycryptodome==3.19.0
+pynvim==0.4.3
+requests==2.32.3
+urllib3==2.4.0
