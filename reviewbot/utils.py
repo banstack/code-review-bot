@@ -1,19 +1,20 @@
 import os
 import requests
+import json
+
+def get_pr_number():
+    event_path = os.getenv("GITHUB_EVENT_PATH")
+    if not event_path:
+        raise Exception("GITHUB_EVENT_PATH not set")
+
+    with open(event_path, 'r') as f:
+        event = json.load(f)
+    
+    return event["pull_request"]["number"]
 
 def get_diff():
     repo = os.environ.get("GITHUB_REPOSITORY")  # e.g. "owner/repo"
-    ref = os.environ.get("GITHUB_REF")          # e.g. "refs/pull/123/merge"
-
-    if not repo or not ref:
-        raise Exception("Missing GitHub repository or ref environment variables.")
-
-    # Extract PR number safely:
-    parts = ref.split("/")
-    if len(parts) >= 3 and parts[-3] == "pull":
-        pr_number = parts[-2]
-    else:
-        raise Exception(f"Unexpected GITHUB_REF format: {ref}")
+    pr_number = get_pr_number()
 
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
@@ -38,8 +39,26 @@ def get_diff():
         for f in files:
             patch = f.get("patch")
             if patch:
-                diffs.append(patch)
+                diffs.append(f"File: {f['filename']}\n{patch}")
 
         page += 1
 
-    return "\n".join(diffs)
+    return "\n\n".join(diffs)
+
+def post_pr_comment(body: str):
+    repo = os.getenv("GITHUB_REPOSITORY")
+    token = os.getenv("GITHUB_TOKEN")
+    pr_number = get_pr_number()
+
+    url = f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json"
+    }
+    payload = {
+        "body": body
+    }
+
+    response = requests.post(url, headers=headers, json=payload)
+    print("GitHub API response:", response.status_code, response.text)
+    response.raise_for_status()

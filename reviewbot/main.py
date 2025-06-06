@@ -1,6 +1,6 @@
 import os
 import requests
-from reviewbot.utils import get_diff
+from reviewbot.utils import get_diff, post_pr_comment, get_pr_number
 
 def review_with_groq(diff):
     api_key = os.environ.get("GROQ_API_KEY")
@@ -12,23 +12,21 @@ def review_with_groq(diff):
         "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "messages": [
             {"role": "system", "content": "You are a senior software engineer doing code reviews."},
-            {"role": "user", "content": f"Please review this code diff:\n\n{diff}"}
+            {"role": "user", "content": f"Please review this code diff, list improvements in bullet points:\n\n{diff}"}
         ],
         "temperature": 0.3,
     }
 
     response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
 
-    # 👇 Print the response for debugging
     print("Raw Groq response:", response.status_code, response.text)
-
     response.raise_for_status()
     return response.json()["choices"][0]["message"]["content"]
 
 def main():
     diff = get_diff()
     review = review_with_groq(diff)
-    print("::notice file=test_module/hello.py,line=1::" + review.replace("\n", " "))
+    post_pr_comment(review)
 
 if __name__ == "__main__":
     main()
