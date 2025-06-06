@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/github/context-server/main/schema.json",
+  "name": "LLM Code Review Bot",
+  "description": "A bot that uses LLMs to review pull request code diffs and post comments.",
+  "app": {
+    "name": "llm-code-review-bot",
+    "version": "0.1.0"
+  },
+  "config": {
+    "entrypoint": "reviewbot.main:main",
+    "runtime": {
+      "language": "python"
+    }
+  },
+  "capabilities": {
+    "pullRequestReview": true
+  }
+}

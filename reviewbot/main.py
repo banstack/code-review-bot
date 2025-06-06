@@ -2,6 +2,8 @@ import os
 import requests
 from reviewbot.utils import get_diff, post_pr_comment, get_pr_number
 
+llm_prompt = "Please reviiew thsi code diff, list improvements and potential optimizations in bullet points";
+
 def review_with_groq(diff):
     api_key = os.environ.get("GROQ_API_KEY")
     headers = {
@@ -12,7 +14,7 @@ def review_with_groq(diff):
         "model": "meta-llama/llama-4-scout-17b-16e-instruct",
         "messages": [
             {"role": "system", "content": "You are a senior software engineer doing code reviews."},
-            {"role": "user", "content": f"Please review this code diff, list improvements in bullet points:\n\n{diff}"}
+            {"role": "user", "content": f"{llm_prompt} given the following diff{diff}"}
         ],
         "temperature": 0.3,
     }
