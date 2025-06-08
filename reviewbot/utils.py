@@ -13,7 +13,7 @@ def get_pr_number():
     return event["pull_request"]["number"]
 
 def get_diff():
-    repo = os.environ.get("GITHUB_REPOSITORY")  # e.g. "owner/repo"
+    repo = os.environ.get("GITHUB_REPOSITORY")
     pr_number = get_pr_number()
 
     token = os.environ.get("GITHUB_TOKEN")
